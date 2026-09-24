@@ -1,5 +1,13 @@
 import jwt
+import os
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Misma clave usada en el middleware
+JWT_SECRET = os.getenv("JWT_SECRET", "clave_super_secreta_y_larga_de_mas_de_32_caracteres_12345")
+ALGORITHM = "HS256"
 
 class AuthService:
     def login(self, usuario: str, password: str):
@@ -9,7 +17,8 @@ class AuthService:
             "exp": datetime.utcnow() + timedelta(days=365)
         }
         
-        token = jwt.encode(payload, "clave_cualquiera_1234567890_super_larga", algorithm="HS256")
+        # Genera el token usando JWT_SECRET
+        token = jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
         
         return {
             "mensaje": f"Bienvenido {usuario}, inicio de sesión exitoso",
